@@ -1,16 +1,19 @@
 from flask import Flask, jsonify, redirect, url_for
 from flasgger import Swagger, swag_from
 from flask_cors import CORS
+from flask_mail import Mail
 
-from .models import db
+from .models import db, mail
 from . import config
 
 
 def create_app(config_key='development'):
-
     app = Flask(__name__)
     app.config.from_object(config.app_config[config_key])
+    config.send_mail = Mail(app)
+
     db.init_app(app)
+    mail.init_app(app)
     Swagger(app)
     CORS(app)
 

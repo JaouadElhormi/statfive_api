@@ -11,13 +11,14 @@ class Auth:
     def auth_required(func):
         @wraps(func)
         def decorated_auth(*args, **kwargs):
-            if 'Authentication' not in request.headers:
+            if 'api-token' not in request.headers:
                 return Response(mimetype='application/json',
                                 response=json.dumps(
                                     {'error': 'Authentication token is not available, please login to get one'}),
                                 status=400)
             else:
                 token = request.headers.get('api-token')
+                print(token)
                 data = Auth.decode_token(token)
                 if data['error']:
                     return Response(mimetype='application/json',
@@ -55,7 +56,7 @@ class Auth:
     def decode_token(token):
         re = {'data': {}, 'error': {}}
         try:
-            payload = jwt.decode(token, 'StatFive')
+            payload = jwt.decode(token, 'StatFive', 'HS256')
             re['data'] = {'user_id': payload['sub']}
             return re
         except jwt.ExpiredSignatureError as e1:

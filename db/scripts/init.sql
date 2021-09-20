@@ -207,13 +207,17 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+ALTER TABLE `users`
+ADD COLUMN `code` VARCHAR(45) NULL AFTER `image`,
+ADD COLUMN `verification` TINYINT(1) NULL AFTER `code`;
+
 --
 -- Dumping data for table `users`
 --
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,0,'jaouad@gmail.com','elhormi','jaouad','pbkdf2:sha256:260000$L1AmSnPjCtNX7pm0$3dca7aaf82a577f3fcb7ee8cf1f2eadd45f30814102003d4f35d66e82fdf64f1',NULL),(2,0,'jaouad@jaouad.com','jaouad','jaouad','pbkdf2:sha256:260000$INCFtMQOPWdPQ5MO$db08b9642113a37274145c8556942b086ee8737dbd1b10477d056f0bf8603107',NULL);
+INSERT INTO `users` VALUES (1,0,'jaouad@gmail.com','elhormi','jaouad','pbkdf2:sha256:260000$L1AmSnPjCtNX7pm0$3dca7aaf82a577f3fcb7ee8cf1f2eadd45f30814102003d4f35d66e82fdf64f1',NULL, 'aaaa', 1),(2,0,'jaouad@jaouad.com','jaouad','jaouad','pbkdf2:sha256:260000$INCFtMQOPWdPQ5MO$db08b9642113a37274145c8556942b086ee8737dbd1b10477d056f0bf8603107',NULL, 'aaaa', 1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

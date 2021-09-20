@@ -18,6 +18,8 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     image = db.Column(db.String)
     role = db.Column(db.String)
+    code = db.Column(db.String)
+    verification = db.Column(db.Boolean)
 
     def check_password(self, password):
         """
@@ -35,7 +37,8 @@ class User(db.Model):
             'id': self.id,
             'lastname': self.name,
             'firstname': self.firstname,
-            'email': self.mail
+            'email': self.mail,
+            'verification': self.verification
         }
 
     @staticmethod
@@ -48,6 +51,10 @@ class User(db.Model):
     @staticmethod
     def get_user_by_email(email):
         return User.query.filter_by(mail=email).first()
+
+    @staticmethod
+    def get_one_user(id):
+        return User.query.filter_by(id=id).first()
 
 
 class UserHasTeam(db.Model):

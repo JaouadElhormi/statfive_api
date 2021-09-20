@@ -1,11 +1,16 @@
-from flask import request, json, Response, Blueprint
+import random
+import string
+
+from flask import request, json, Response, Blueprint, g
 from flasgger import swag_from
 
 from ..specs import specs_users
-from ..models.user import User
-from ..models.stats import Stats
 from ..auth.authentication import Auth
 from ..helper import custom_response
+from ..helper.user_mail import send_verification_code_mail
+from ..models.user import User
+from ..models.stats import Stats
+from ..models import db
 
 user_api = Blueprint('users', __name__)
 
@@ -19,17 +24,33 @@ def create():
     if user_in_db:
         message = {'error': True, 'message': 'Email déjà existant, veuillez en choisir un autre.', 'data': None}
         return custom_response(message, 400)
-
+    code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+    send_verification_code_mail('Votre code de validation est le', req_data['email'], code)
     password = User.hash_password(req_data['password'])
     user = User(
         firstname=req_data['firstname'],
         name=req_data['lastname'],
         mail=req_data['email'],
         password=password,
-        role=0
+        role=0,
+        code=code,
+        verification=False
     )
     user.save()
     return custom_response({'error': False, 'message': 'Utilisateur bien enregistré.', 'data': None}, 201)
+
+
+@user_api.route('/verification_code/<string:code>', methods=['GET'])
+@swag_from(specs_users.verification_code)
+@Auth.auth_required
+def verification_code(code):
+    user_in_db = User.get_one_user(g.user['id'])
+    if code != user_in_db.code:
+        message = {'error': True, 'message': 'Code pas bon.', 'data': None}
+        return custom_response(message, 400)
+    user_in_db.verification = True
+    db.session.commit()
+    return custom_response({'error': False, 'message': 'Code bon.', 'data': None}, 200)
 
 
 @user_api.route('/login', methods=['POST'])

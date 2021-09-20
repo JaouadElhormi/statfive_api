@@ -278,3 +278,45 @@ stat_user_by_id = {
     }
   }
 }
+
+
+verification_code = {
+  "parameters": [
+      {
+          "in": "path",
+          "name": "code",
+          "required": True,
+      }
+  ],
+  "definitions": {
+    "message": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "error": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "responses": {
+    "400": {
+      "description": "Code pas bon.",
+      "schema": {
+        "$ref": "#/definitions/message"
+      },
+      "examples": {
+      }
+    },
+    "200": {
+      "description": "Code bon.",
+      "schema": {
+        "$ref": "#/definitions/message"
+      },
+      "examples": {
+      }
+    }
+  }
+}
